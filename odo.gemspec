@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Odo::VERSION
   spec.authors       = ["Darren Cauthon"]
   spec.email         = ["darren@cauthon.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Turn a static website or template into a web application.}
+  spec.description   = %q{Turns a static site into a web application.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
