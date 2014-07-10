@@ -1,6 +1,7 @@
 require "odo/version"
 require 'nokogiri'
 require 'open-uri'
+require 'pp'
 
 module Odo
 
@@ -26,16 +27,23 @@ module Odo
 
     files_to_download = files.map do |type, refs|
                           refs.map do |ref|
+                            uri = URI.parse(ref)
+                            download_location = "#{target}/" + (uri.host ? "#{uri.host}#{uri.path}" : uri.path).to_s
                             { 
-                              type:     type,
-                              original: ref,
-                              source:   "#{url}/#{ref}",
-                              target:   "#{target}/#{ref}"
+                              type:                     type,
+                              original:                 ref,
+                              source:                   uri.host ? ref : "#{url}/#{uri.path}",
+                              download_location:        download_location,
+                              replacement_for_original: uri.path.to_s
                             }
                           end
                         end.flatten
 
-    puts files_to_download.inspect
+    files_to_download.reject { |x| x[:replacement_for_original].start_with?('/') }.each do |file_to_download|
+      file_to_download[:replacement_for_original] = "/" + file_to_download[:replacement_for_original]
+    end
+
+    pp files_to_download
 
   end
 
