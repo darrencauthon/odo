@@ -2,6 +2,7 @@ require "odo/version"
 require 'nokogiri'
 require 'open-uri'
 require 'pp'
+require 'uuid'
 
 module Odo
 
@@ -41,6 +42,11 @@ module Odo
 
     files_to_download.reject { |x| x[:replacement_for_original].start_with?('/') }.each do |file_to_download|
       file_to_download[:replacement_for_original] = "/" + file_to_download[:replacement_for_original]
+    end
+
+    files_to_download.select { |x| x[:replacement_for_original] == "/" }.each do |file|
+      file[:replacement_for_original] = "/" + UUID.new.generate
+      file[:download_location] += "/#{file[:replacement_for_original]}".gsub("//", "/")
     end
 
     pp files_to_download
