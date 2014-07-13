@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "nokogiri"
   spec.add_runtime_dependency "uuid"
+  spec.add_runtime_dependency "image_scraper"
 end
