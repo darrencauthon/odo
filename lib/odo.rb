@@ -17,6 +17,11 @@ module Odo
 
     html = Html.for url, considering: { assets: assets }
 
+    unless File.directory? target
+      FileUtils.mkdir_p target
+    end
+
+    File.open("#{target}/index.html", 'w') { |f| f.write html }
   end
 
 end
