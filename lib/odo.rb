@@ -15,7 +15,7 @@ module Odo
 
     assets = Assets.from url, target
 
-    pp assets
+    html = Html.for url, considering: { assets: assets }
 
   end
 
