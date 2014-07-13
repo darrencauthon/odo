@@ -1,5 +1,6 @@
 require "odo/version"
 Dir[File.dirname(__FILE__) + '/odo/*.rb'].each {|file| require file }
+Dir[File.dirname(__FILE__) + '/odo/strategies/*.rb'].each {|file| require file }
 require 'nokogiri'
 require 'open-uri'
 require 'pp'
@@ -15,11 +16,8 @@ module Odo
 
     assets = Assets.from url, target
 
-    assets.each do |asset|
-      asset[:replacement_for_original] = asset[:replacement_for_original].split('/')
-                                           .reject { |x| x.to_s == '' }
-                                           .join('/')
-    end
+    strategy = Odo::Strategies::LocalStrategy.new
+    assets = strategy.adjust_assets assets
 
     html = Html.for url, considering: { assets: assets }
 
