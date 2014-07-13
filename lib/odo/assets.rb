@@ -39,14 +39,16 @@ module Odo
         file_to_download[:replacement_for_original] = "/" + file_to_download[:replacement_for_original]
       end
 
-      assets.select { |x| x[:replacement_for_original] == "/" }.each do |file|
-        uri = URI.parse file[:original]
-        file[:replacement_for_original] = "/#{uri.host}/" + UUID.new.generate
-        file[:download_location] = "#{target}/#{file[:replacement_for_original]}"
+      assets.select { |x| URI.parse x[:original] }.each do |asset|
+        uri = URI.parse asset[:original]
+        sigh = asset[:replacement_for_original] == '/' ? UUID.new.generate : uri.path
+        asset[:download_location] = "#{target}/#{uri.host}/#{sigh}"
+        asset[:replacement_for_original] = "/#{uri.host}/" + sigh
       end
 
       assets.each do |asset|
         asset[:download_location] = asset[:download_location].gsub('//', '/')
+        asset[:replacement_for_original] = asset[:replacement_for_original].gsub('//', '/')
       end
 
       assets
