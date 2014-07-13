@@ -24,7 +24,7 @@ module Odo
                                 original:                 ref,
                                 source:                   uri.host ? ref : "#{url}/#{uri.path}",
                                 download_location:        download_location,
-                                replacement_for_original: uri.path.to_s
+                                replacement_for_original: uri.host ? "#{uri.host}#{uri.path}" : uri.path.to_s
                               }
                             end
                           end.flatten
