@@ -42,7 +42,11 @@ module Odo
       assets.select { |x| x[:replacement_for_original] == "/" }.each do |file|
         uri = URI.parse file[:original]
         file[:replacement_for_original] = "/#{uri.host}/" + UUID.new.generate
-        file[:download_location] = "#{target}/#{uri.host}/#{file[:replacement_for_original]}".gsub("//", "/")
+        file[:download_location] = "#{target}/#{file[:replacement_for_original]}"
+      end
+
+      assets.each do |asset|
+        asset[:download_location] = asset[:download_location].gsub('//', '/')
       end
 
       assets
