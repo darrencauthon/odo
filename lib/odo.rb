@@ -15,6 +15,12 @@ module Odo
 
     assets = Assets.from url, target
 
+    assets.each do |asset|
+      asset[:replacement_for_original] = asset[:replacement_for_original].split('/')
+                                           .reject { |x| x.to_s == '' }
+                                           .join('/')
+    end
+
     html = Html.for url, considering: { assets: assets }
 
     unless File.directory? target
