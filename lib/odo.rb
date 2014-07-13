@@ -29,15 +29,7 @@ module Odo
 
     File.open("#{target}/index.html", 'w') { |f| f.write html }
 
-    assets.each do |asset|
-      asset_directory = asset[:download_location].split('/')
-      asset_directory.pop
-      asset_directory = asset_directory.join('/')
-      unless File.directory? asset_directory
-        FileUtils.mkdir_p asset_directory
-      end
-      `wget \"#{asset[:source]}\" -O \"#{asset[:download_location]}\"`
-    end
+    Assets.download assets
 
   end
 

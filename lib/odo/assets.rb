@@ -55,6 +55,18 @@ module Odo
 
     end
 
+    def self.download assets
+      assets.each do |asset|
+        asset_directory = asset[:download_location].split('/')
+        asset_directory.pop
+        asset_directory = asset_directory.join('/')
+        unless File.directory? asset_directory
+          FileUtils.mkdir_p asset_directory
+        end
+        `wget \"#{asset[:source]}\" -O \"#{asset[:download_location]}\"`
+      end
+    end
+
     def self.extract_ref_from element
       return element if element.is_a? String
       element['href'] || element['src']
