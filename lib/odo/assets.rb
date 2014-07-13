@@ -29,18 +29,20 @@ module Odo
                                 original:                 ref,
                                 source:                   uri.host ? ref : "#{url}/#{uri.path}",
                                 download_location:        download_location,
-                                replacement_for_original: uri.host ? "#{uri.host}#{uri.path}" : uri.path.to_s
+                                replacement_for_original: uri.path.to_s
                               }
                             end
                           end.flatten
+
 
       assets.reject { |x| x[:replacement_for_original].start_with?('/') }.each do |file_to_download|
         file_to_download[:replacement_for_original] = "/" + file_to_download[:replacement_for_original]
       end
 
       assets.select { |x| x[:replacement_for_original] == "/" }.each do |file|
-        file[:replacement_for_original] = "/" + UUID.new.generate
-        file[:download_location] += "/#{file[:replacement_for_original]}".gsub("//", "/")
+        uri = URI.parse file[:original]
+        file[:replacement_for_original] = "/#{uri.host}/" + UUID.new.generate
+        file[:download_location] = "#{target}/#{uri.host}/#{file[:replacement_for_original]}".gsub("//", "/")
       end
 
       assets
