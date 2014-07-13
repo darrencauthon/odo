@@ -11,7 +11,7 @@ module Odo
         correct_element_with element, assets
       end
 
-      puts original.to_html
+      original.to_html
     end
 
     def self.correct_element_with element, assets
