@@ -4,7 +4,9 @@ module Odo
 
   module Assets
 
-    def self.from url, target
+    def self.from(options = {})
+
+      url, target = options[:url], options[:target]
 
       original = Nokogiri::HTML open url
 
