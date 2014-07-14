@@ -6,18 +6,25 @@ module Odo
 
     def self.from(options = {})
       nokogiri = Nokogiri::HTML open options[:url]
-      from_nokogiri nokogiri, options
+      from_nokogiri(nokogiri, options) + from_image_scraper(options)
+    end
+
+    def self.from_image_scraper options
+      image_scraper = ImageScraper::Client.new(options[:url], { :include_css_images => true })
+
+      files = [
+                image_scraper.image_urls.map { |x| x.sub options[:url], '' }
+              ].flatten.reject { |f| f.to_s == '' }
+
+      from_files files, options
     end
 
     def self.from_nokogiri nokogiri, options
 
-      image_scraper = ImageScraper::Client.new(options[:url], { :include_css_images => true })
-
       files = [
-                nokogiri.css('link').map { |x| extract_ref_from x },
+                nokogiri.css('link').map   { |x| extract_ref_from x },
                 nokogiri.css('script').map { |x| extract_ref_from x },
-                nokogiri.css('img').map { |x| extract_ref_from x },
-                image_scraper.image_urls.map { |x| x.sub options[:url], '' }
+                nokogiri.css('img').map    { |x| extract_ref_from x },
               ].flatten.reject { |f| f.to_s == '' }
 
       from_files files, options
