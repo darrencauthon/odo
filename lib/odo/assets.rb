@@ -12,9 +12,9 @@ module Odo
     def self.from_image_scraper options
       image_scraper = ImageScraper::Client.new(options[:url], { :include_css_images => true })
 
-      files = [
-                image_scraper.image_urls.map { |x| x.sub options[:url], '' }
-              ].flatten.reject { |f| f.to_s == '' }
+      files = image_scraper.image_urls
+                .map { |x| x.sub options[:url], '' }
+                .reject { |f| f.to_s == '' }
 
       from_files files, options
     end
