@@ -5,19 +5,28 @@ module Odo
   module Assets
 
     def self.from(options = {})
+      nokogiri = Nokogiri::HTML open options[:url]
+      from_nokogiri nokogiri, options
+    end
 
-      url, target = options[:url], options[:target]
+    def self.from_nokogiri nokogiri, options
 
-      original = Nokogiri::HTML open url
-
-      image_scraper = ImageScraper::Client.new(url, { :include_css_images => true })
+      image_scraper = ImageScraper::Client.new(options[:url], { :include_css_images => true })
 
       files = [
-                original.css('link').map { |x| extract_ref_from x },
-                original.css('script').map { |x| extract_ref_from x },
-                original.css('img').map { |x| extract_ref_from x },
-                image_scraper.image_urls.map { |x| x.sub url, '' }
+                nokogiri.css('link').map { |x| extract_ref_from x },
+                nokogiri.css('script').map { |x| extract_ref_from x },
+                nokogiri.css('img').map { |x| extract_ref_from x },
+                image_scraper.image_urls.map { |x| x.sub options[:url], '' }
               ].flatten.reject { |f| f.to_s == '' }
+
+      from_files files, options
+
+    end
+
+    def self.from_files files, options
+
+      url, target = options[:url], options[:target]
 
       assets = files.map do |file|
                  uri = URI.parse(file)
@@ -48,7 +57,6 @@ module Odo
       end
 
       assets
-
     end
 
     def self.download assets
