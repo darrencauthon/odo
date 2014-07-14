@@ -15,9 +15,7 @@ module Odo
                 original.css('script').map { |x| extract_ref_from x },
                 original.css('img').map { |x| extract_ref_from x },
                 image_scraper.image_urls.map { |x| x.sub url, '' }
-              ].flatten
-
-      files.reject! { |f| f.to_s == '' }
+              ].flatten.reject { |f| f.to_s == '' }
 
       assets = files.map do |file|
                  uri = URI.parse(file)
