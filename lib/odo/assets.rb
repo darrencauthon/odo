@@ -8,14 +8,14 @@ module Odo
 
       original = Nokogiri::HTML open url
 
+      image_scraper = ImageScraper::Client.new(url, { :include_css_images => true })
+
       files = {
                 stylesheet: original.css('link').map { |x| extract_ref_from x },
                 javascript: original.css('script').map { |x| extract_ref_from x },
-                image:      original.css('img').map { |x| extract_ref_from x }
+                image:      original.css('img').map { |x| extract_ref_from x },
+                css_images: image_scraper.image_urls.map { |x| x.sub url, '' }
               }
-
-      image_scraper = ImageScraper::Client.new(url, { :include_css_images => true })
-      files[:css_images] = image_scraper.image_urls.map { |x| x.sub url, '' }
 
       files.keys.each { |k| files[k] = files[k].select { |x| x.to_s != '' } }
 
