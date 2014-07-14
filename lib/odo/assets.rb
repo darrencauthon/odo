@@ -1,4 +1,5 @@
 require 'image_scraper'
+require 'spidr'
 
 module Odo
 
@@ -7,6 +8,11 @@ module Odo
     def self.from(options = {})
       nokogiri = Nokogiri::HTML open options[:url]
       from_nokogiri(nokogiri, options) + from_image_scraper(options)
+    end
+
+    def self.from_spidr options
+      Spidr.host(options[:url].gsub('http://', ''))
+        .visited_links
     end
 
     def self.from_image_scraper options
