@@ -10,28 +10,25 @@ module Odo
 
       image_scraper = ImageScraper::Client.new(url, { :include_css_images => true })
 
-      files = {
-                stylesheet: original.css('link').map { |x| extract_ref_from x },
-                javascript: original.css('script').map { |x| extract_ref_from x },
-                image:      original.css('img').map { |x| extract_ref_from x },
-                css_images: image_scraper.image_urls.map { |x| x.sub url, '' }
-              }
+      files = [
+                original.css('link').map { |x| extract_ref_from x },
+                original.css('script').map { |x| extract_ref_from x },
+                original.css('img').map { |x| extract_ref_from x },
+                image_scraper.image_urls.map { |x| x.sub url, '' }
+              ].flatten
 
-      files.keys.each { |k| files[k] = files[k].select { |x| x.to_s != '' } }
+      files.reject! { |f| f.to_s == '' }
 
-      assets = files.map do |type, refs|
-                            refs.map do |ref|
-                              uri = URI.parse(ref)
-                              download_location = "#{target}/" + (uri.host ? "#{uri.host}#{uri.path}" : uri.path).to_s
-                              { 
-                                type:                     type,
-                                original:                 ref,
-                                source:                   uri.host ? ref : "#{url}/#{uri.path}",
-                                download_location:        download_location,
-                                replacement_for_original: uri.path.to_s
-                              }
-                            end
-                          end.flatten
+      assets = files.map do |file|
+                 uri = URI.parse(file)
+                 download_location = "#{target}/" + (uri.host ? "#{uri.host}#{uri.path}" : uri.path).to_s
+                 {
+                   original:                 file,
+                   source:                   uri.host ? file : "#{url}/#{uri.path}",
+                   download_location:        download_location,
+                   replacement_for_original: uri.path.to_s
+                 }
+               end.flatten
 
 
       assets.reject { |x| x[:replacement_for_original].start_with?('/') }.each do |file_to_download|
