@@ -17,7 +17,7 @@ module Odo
                 .visited_links
                 .select do |x|
                   uri = URI.parse x
-                  ['.jpg', '.gif', '.jpeg', '.swf', '.png'].reduce(false) do |t, i|
+                  ['.js', '.css', '.jpg', '.gif', '.jpeg', '.swf', '.png'].reduce(false) do |t, i|
                     t || uri.path.downcase.include?(i)
                   end
                 end
