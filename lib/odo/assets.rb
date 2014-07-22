@@ -5,9 +5,13 @@ module Odo
 
   module Assets
 
-    def self.from(options = {})
+    def self.from_url(options = {})
       nokogiri = Nokogiri::HTML open options[:url]
-      from_nokogiri(nokogiri, options) + from_image_scraper(options) + from_spidr(options)
+      from_nokogiri(nokogiri, options) + from_image_scraper(options)
+    end
+
+    def self.from_domain(options)
+      from_spidr(options)
     end
 
     def self.from_spidr options
