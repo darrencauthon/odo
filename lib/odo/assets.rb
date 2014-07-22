@@ -100,7 +100,9 @@ module Odo
         unless File.directory? asset_directory
           FileUtils.mkdir_p asset_directory
         end
-        `wget \"#{asset[:source]}\" -O \"#{asset[:download_location]}\"`
+        unless File.exist?(asset[:download_location])
+          `wget \"#{asset[:source]}\" -O \"#{asset[:download_location]}\"`
+        end
       end
     end
 
