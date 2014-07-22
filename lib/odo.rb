@@ -16,16 +16,19 @@ module Odo
     filename = options[:filename] || 'index.html'
 
     assets = Assets.from(url: url, target: target)
-    raise assets.inspect
 
     strategy = Odo::Strategies::LocalStrategy.new
     assets = strategy.adjust_assets assets
 
-    html = Html.for url, considering: { assets: assets }
-
     strategy.create_the_site target: target
 
-    File.open("#{target}/#{filename}", 'w') { |f| f.write html }
+    Odo::Pages.from(options).each do |page|
+      html = Html.for page, considering: { assets: assets }
+
+      uri = URI.parse(page)
+      path = uri.path == "" ? "index.html" : uri.path
+      File.open("#{target}/#{path}", 'w') { |f| f.write html }
+    end
 
     Assets.download assets
 
