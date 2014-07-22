@@ -6,8 +6,8 @@ describe Odo do
 
     it "should do something" do
 
-      Odo.stubbing_things_out(url:    URL,
-                              target: TARGET)
+      Odo.stubbing_things_out(url:    ENV['URL'],
+                              target: ENV['target'])
         
     end
 

@@ -30,23 +30,4 @@ module Odo
 
   end
 
-  def self.stubbing_more_things_out options
-    url    = options[:url]
-    target = options[:target]
-    filename = options[:filename] || 'index.html'
-
-    assets = Assets.from(url: url, target: target)
-
-    strategy = Odo::Strategies::LocalStrategy.new
-    assets = strategy.adjust_assets assets
-
-    html = Html.for url, considering: { assets: assets }
-
-    strategy.create_the_site target: target
-
-    File.open("#{target}/#{filename}", 'w') { |f| f.write html }
-
-    Assets.download assets
-  end
-
 end
