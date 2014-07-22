@@ -7,13 +7,20 @@ module Odo
 
     def self.from(options = {})
       nokogiri = Nokogiri::HTML open options[:url]
-      from_nokogiri(nokogiri, options) + from_image_scraper(options)
+      from_nokogiri(nokogiri, options) + from_image_scraper(options) + from_spidr(options)
     end
 
     def self.from_spidr options
-      files = Spidr.host(options[:url].gsub('http://', '').gsub('https://', ''))
+      url = options[:url]
+      uri = URI.parse(url)
+      files = Spidr.start_at(url, hosts: [uri.host])
                 .visited_links
-                .select { |x| x.strip != '/' }
+                .select do |x|
+                  uri = URI.parse x
+                  ['.jpg', '.gif', '.jpeg', '.swf', '.png'].reduce(false) do |t, i|
+                    t || uri.path.downcase.include?(i)
+                  end
+                end
                 .map do |u|
                        begin
                          URI.parse(u).path
@@ -22,6 +29,7 @@ module Odo
                        end
                      end
                 .select { |x| x }
+
       from_files files, options
     end
 

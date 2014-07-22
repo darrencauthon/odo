@@ -15,9 +15,8 @@ module Odo
     target = options[:target]
     filename = options[:filename] || 'index.html'
 
-    #assets = Assets.from(url: url, target: target)
-    #raise assets.inspect
-    raise Assets.from_spidr(url: url, target: target).inspect
+    assets = Assets.from(url: url, target: target)
+    raise assets.inspect
 
     strategy = Odo::Strategies::LocalStrategy.new
     assets = strategy.adjust_assets assets
