@@ -11,8 +11,18 @@ module Odo
     end
 
     def self.from_spidr options
-      Spidr.host(options[:url].gsub('http://', ''))
-        .visited_links
+      files = Spidr.host(options[:url].gsub('http://', '').gsub('https://', ''))
+                .visited_links
+                .select { |x| x.strip != '/' }
+                .map do |u|
+                       begin
+                         URI.parse(u).path
+                       rescue
+                         nil
+                       end
+                     end
+                .select { |x| x }
+      from_files files, options
     end
 
     def self.from_image_scraper options
@@ -66,6 +76,8 @@ module Odo
 
       assets.each do |asset|
         asset[:download_location] = asset[:download_location].gsub('//', '/')
+        asset[:download_location] = asset[:download_location].gsub('//', '/')
+        asset[:replacement_for_original] = asset[:replacement_for_original].gsub('//', '/')
         asset[:replacement_for_original] = asset[:replacement_for_original].gsub('//', '/')
       end
 
