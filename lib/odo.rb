@@ -13,6 +13,7 @@ module Odo
 
     url    = options[:url]
     target = options[:target]
+    filename = options[:filename] || 'index.html'
 
     assets = Assets.from(url: url, target: target)
 
@@ -23,7 +24,7 @@ module Odo
 
     strategy.create_the_site target: target
 
-    File.open("#{target}/index.html", 'w') { |f| f.write html }
+    File.open("#{target}/#{filename}", 'w') { |f| f.write html }
 
     Assets.download assets
 
@@ -32,6 +33,7 @@ module Odo
   def self.stubbing_more_things_out options
     url    = options[:url]
     target = options[:target]
+    filename = options[:filename] || 'index.html'
 
     assets = Assets.from(url: url, target: target)
 
@@ -42,7 +44,7 @@ module Odo
 
     strategy.create_the_site target: target
 
-    File.open("#{target}/index.html", 'w') { |f| f.write html }
+    File.open("#{target}/#{filename}", 'w') { |f| f.write html }
 
     Assets.download assets
   end
