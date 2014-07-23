@@ -62,13 +62,14 @@ module Odo
     def self.from_files files, options
 
       url, target = options[:url], options[:target]
+      host = URI.parse(url).host
 
       assets = files.map do |file|
                  uri = URI.parse(file)
-                 download_location = "#{target}/" + (uri.host ? "#{uri.host}#{uri.path}" : uri.path).to_s
+                 download_location = "#{target}/" + (uri.host && uri.host != host ? "#{uri.host}#{uri.path}" : uri.path).to_s
                  {
                    original:                 file,
-                   source:                   uri.host ? file : "#{url}/#{uri.path}",
+                   source:                   uri.host && uri.host != host ? file : "#{url}/#{uri.path}",
                    download_location:        download_location,
                    replacement_for_original: uri.path.to_s
                  }
@@ -81,6 +82,7 @@ module Odo
 
       assets.select { |x| URI.parse x[:original] }.each do |asset|
         uri = URI.parse asset[:original]
+        next if asset[:replacement_for_original] != '/'
         sigh = asset[:replacement_for_original] == '/' ? UUID.new.generate : uri.path
         asset[:download_location] = "#{target}/#{uri.host}/#{sigh}"
         asset[:replacement_for_original] = "/#{uri.host}/" + sigh
