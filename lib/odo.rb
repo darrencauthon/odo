@@ -23,12 +23,14 @@ module Odo
 
     Odo::Pages.from(options).each do |page|
 
+      uri = URI.parse(page)
+
       page_assets = Assets.from_url(url: page, target: target)
-      page_assets = strategy.adjust_assets page_assets
+
+      page_assets = strategy.adjust_assets page_assets, { page: page }
 
       html = Html.for page, considering: { assets: page_assets }
 
-      uri = URI.parse(page)
       path = uri.path == "" ? "index.html" : uri.path
       File.open("#{target}/#{path}", 'w') { |f| f.write html }
 
