@@ -8,6 +8,39 @@ require 'uuid'
 
 module Odo
 
+  def self.stubbing_specific_pages pages, options
+    target = options[:target]
+
+    strategy = Odo::Strategies::LocalStrategy.new
+    strategy.create_the_site target: target
+
+    all_assets = []
+    pages.each do |page|
+
+      uri = URI.parse(page)
+
+      page_assets = Assets.from_url(url: page, target: target)
+
+      page_assets = strategy.adjust_assets page_assets, { page: page }
+
+      html = Html.for page, considering: { assets: page_assets }
+
+      path = target + '/' + (uri.path == "" ? "index.html" : uri.path)
+
+      directory = path.split('/')
+      directory.pop
+      directory = directory.join('/')
+      FileUtils.mkdir_p directory unless File.directory? directory
+      File.open(path, 'w') { |f| f.write html }
+
+      all_assets += page_assets
+    end
+
+    all_assets.flatten!
+
+    Assets.download all_assets
+
+  end
 
   def self.stubbing_things_out options
 
