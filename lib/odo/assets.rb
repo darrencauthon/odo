@@ -69,7 +69,7 @@ module Odo
                  download_location = "#{target}/" + (uri.host && uri.host != host ? "#{uri.host}#{uri.path}" : uri.path).to_s
                  {
                    original:                 file,
-                   source:                   uri.host && uri.host != host ? file : "#{url}/#{uri.path}",
+                   source:                   uri.host && uri.host != host ? file : "http://#{host}/#{uri.path}",
                    download_location:        download_location,
                    replacement_for_original: uri.path.to_s
                  }
